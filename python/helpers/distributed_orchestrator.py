@@ -59,10 +59,48 @@ class AgentCapability:
         
         # Check if agent has required skills
         required_skills = set(subtask.required_skills)
-        if required_skills and not required_skills.issubset(self.skills):
-            return False
+        if not required_skills:
+            return True  # Task has no specific skill requirements
+        
+        # Check for exact skill matches first
+        if required_skills.issubset(self.skills):
+            return True
+        
+        # Check for skill category matches (more flexible matching)
+        agent_skills_lower = {skill.lower().replace('_', ' ') for skill in self.skills}
+        required_skills_lower = {skill.lower().replace('_', ' ') for skill in required_skills}
+        
+        # Define skill equivalencies
+        skill_mappings = {
+            'requirements analysis': ['planning', 'analysis', 'design'],
+            'data collection': ['data analysis', 'statistics'],
+            'data analysis': ['data collection', 'statistics', 'analysis'],
+            'report writing': ['communication', 'documentation', 'visualization'],
+            'coding': ['development', 'programming', 'implementation'],
+            'development': ['coding', 'programming', 'implementation'],
+            'testing': ['qa', 'validation', 'quality assurance'],
+            'qa': ['testing', 'validation', 'quality assurance'],
+            'design': ['planning', 'architecture', 'requirements analysis'],
+            'planning': ['design', 'coordination', 'requirements analysis'],
+            'general': ['coordination', 'management', 'planning']
+        }
+        
+        # Check if agent has equivalent skills
+        for required_skill in required_skills_lower:
+            # Check direct match
+            if required_skill in agent_skills_lower:
+                return True
             
-        return True
+            # Check equivalent skills
+            equivalent_skills = skill_mappings.get(required_skill, [])
+            if any(equiv_skill in agent_skills_lower for equiv_skill in equivalent_skills):
+                return True
+        
+        # Special case: agents with 'general' skill can handle basic tasks
+        if 'general' in self.skills:
+            return True
+            
+        return False
 
 
 class DistributedOrchestrator:
@@ -202,20 +240,26 @@ class DistributedOrchestrator:
                 required_skills=["general"]
             ))
         
-        # Store subtasks
+        # Store subtasks and enqueue ready ones
         with self._lock:
             for subtask in subtasks:
                 self._subtasks[subtask.uuid] = subtask
                 # Add to dependency tracking
                 for dep in subtask.dependencies:
                     self._task_dependencies[dep].add(subtask.uuid)
+                
+                # Enqueue tasks that can be executed immediately (no dependencies)
+                if not subtask.dependencies:
+                    self._enqueue_subtask(subtask)
         
         return subtasks
     
     def _enqueue_subtask(self, subtask: AtomicSubtask):
         """Add subtask to priority queue"""
         priority_value = subtask.priority.value
-        heapq.heappush(self._task_queue, (priority_value, subtask))
+        # Use creation time as tiebreaker to avoid comparison issues
+        tiebreaker = subtask.created_at.timestamp()
+        heapq.heappush(self._task_queue, (priority_value, tiebreaker, subtask))
     
     def _can_execute_subtask(self, subtask: AtomicSubtask) -> bool:
         """Check if all dependencies of a subtask are completed"""
@@ -239,11 +283,11 @@ class DistributedOrchestrator:
             remaining_queue = []
             
             while self._task_queue:
-                priority, subtask = heapq.heappop(self._task_queue)
+                priority, tiebreaker, subtask = heapq.heappop(self._task_queue)
                 
                 # Check if subtask can be executed (dependencies met)
                 if not self._can_execute_subtask(subtask):
-                    remaining_queue.append((priority, subtask))
+                    remaining_queue.append((priority, tiebreaker, subtask))
                     continue
                 
                 # Find capable agent
@@ -268,7 +312,7 @@ class DistributedOrchestrator:
                     assignments.append((subtask, best_agent.agent_id))
                 else:
                     # No capable agent available, put back in queue
-                    remaining_queue.append((priority, subtask))
+                    remaining_queue.append((priority, tiebreaker, subtask))
             
             # Restore unassigned tasks to queue
             self._task_queue = remaining_queue
