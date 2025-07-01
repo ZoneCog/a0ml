@@ -54,7 +54,9 @@ class AtomSpaceServer:
                     'count': len(atoms)
                 })
             except Exception as e:
-                return jsonify({'success': False, 'error': str(e)}), 500
+                import logging
+                logging.error("An error occurred: %s", str(e), exc_info=True)
+                return jsonify({'success': False, 'error': 'An internal error has occurred.'}), 500
         
         @self.app.route('/atomspace/write_fragment', methods=['POST'])
         async def write_fragment():
@@ -77,7 +79,9 @@ class AtomSpaceServer:
                     'count': len(atom_ids)
                 })
             except Exception as e:
-                return jsonify({'success': False, 'error': str(e)}), 500
+                import logging
+                logging.error("An error occurred: %s", str(e), exc_info=True)
+                return jsonify({'success': False, 'error': 'An internal error has occurred.'}), 500
         
         @self.app.route('/atomspace/get_atom/<atom_id>', methods=['GET'])
         async def get_atom(atom_id):
@@ -92,7 +96,9 @@ class AtomSpaceServer:
                 else:
                     return jsonify({'success': False, 'error': 'Atom not found'}), 404
             except Exception as e:
-                return jsonify({'success': False, 'error': str(e)}), 500
+                import logging
+                logging.error("An error occurred: %s", str(e), exc_info=True)
+                return jsonify({'success': False, 'error': 'An internal error has occurred.'}), 500
         
         @self.app.route('/atomspace/create_snapshot', methods=['POST'])
         async def create_snapshot():
