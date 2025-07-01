@@ -113,7 +113,9 @@ class AtomSpaceServer:
                     'snapshot_id': snapshot_id
                 })
             except Exception as e:
-                return jsonify({'success': False, 'error': str(e)}), 500
+                import logging
+                logging.error("Exception occurred", exc_info=True)
+                return jsonify({'success': False, 'error': "An internal error has occurred."}), 500
         
         @self.app.route('/atomspace/memory_state', methods=['GET'])
         @self.app.route('/atomspace/memory_state/<snapshot_id>', methods=['GET'])
@@ -126,7 +128,9 @@ class AtomSpaceServer:
                     'memory_state': state
                 })
             except Exception as e:
-                return jsonify({'success': False, 'error': str(e)}), 500
+                import logging
+                logging.error("Exception occurred", exc_info=True)
+                return jsonify({'success': False, 'error': "An internal error has occurred."}), 500
         
         @self.app.route('/atomspace/add_node', methods=['POST'])
         async def add_node():
@@ -188,7 +192,9 @@ class AtomSpaceServer:
                     'link': link.to_dict()
                 })
             except Exception as e:
-                return jsonify({'success': False, 'error': str(e)}), 500
+                import logging
+                logging.error("Exception occurred", exc_info=True)
+                return jsonify({'success': False, 'error': "An internal error has occurred."}), 500
     
     def run(self, host='0.0.0.0', port=5001, debug=False):
         """Run the AtomSpace server"""
