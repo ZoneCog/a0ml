@@ -16,7 +16,7 @@ import os
 import sys
 
 # Add the project root to path  
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 
 from python.helpers.atomspace import AtomSpace
 from python.helpers.neural_symbolic_reasoning import NeuralSymbolicReasoningEngine, ReasoningStage
