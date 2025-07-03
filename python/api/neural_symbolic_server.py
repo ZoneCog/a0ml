@@ -25,6 +25,7 @@ from python.helpers.moses_optimizer import ProgramType
 from python.helpers.pattern_matcher import Pattern, MatchType
 
 app = Flask(__name__)
+app.logger.setLevel("ERROR")
 
 # Global reasoning engine instance
 reasoning_engine: Optional[NeuralSymbolicReasoningEngine] = None
@@ -75,9 +76,9 @@ def get_status():
         })
     
     except Exception as e:
+        app.logger.error("An error occurred in get_status: %s", traceback.format_exc())
         return jsonify({
-            "error": str(e),
-            "traceback": traceback.format_exc()
+            "error": "An internal error has occurred. Please contact support if the issue persists."
         }), 500
 
 
@@ -98,9 +99,9 @@ def initialize_system():
         })
     
     except Exception as e:
+        app.logger.error("An error occurred in initialize_system: %s", traceback.format_exc())
         return jsonify({
-            "error": str(e),
-            "traceback": traceback.format_exc()
+            "error": "An internal error has occurred. Please contact support if the issue persists."
         }), 500
 
 
