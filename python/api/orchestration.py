@@ -31,7 +31,9 @@ def register_agent():
         })
     
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        import logging
+        logging.error("An error occurred in /orchestration/register", exc_info=True)
+        return jsonify({"error": "An internal error has occurred."}), 500
 
 
 @api_bp.route("/orchestration/decompose", methods=["POST"])
@@ -70,7 +72,9 @@ def decompose_goal():
         })
     
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        import logging
+        logging.error("An error occurred in /orchestration/decompose", exc_info=True)
+        return jsonify({"error": "An internal error has occurred."}), 500
 
 
 @api_bp.route("/orchestration/assign", methods=["POST"])
@@ -96,7 +100,9 @@ def assign_tasks():
         })
     
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        import logging
+        logging.error("An error occurred in /orchestration/assign", exc_info=True)
+        return jsonify({"error": "An internal error has occurred."}), 500
 
 
 @api_bp.route("/orchestration/status", methods=["GET"])
@@ -112,7 +118,9 @@ def get_orchestration_status():
         })
     
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        import logging
+        logging.error("An error occurred in /orchestration/status", exc_info=True)
+        return jsonify({"error": "An internal error has occurred."}), 500
 
 
 @api_bp.route("/orchestration/tensor", methods=["GET"])
@@ -129,7 +137,9 @@ def get_task_tensor():
         })
     
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        import logging
+        logging.error("An error occurred in /orchestration/tensor", exc_info=True)
+        return jsonify({"error": "An internal error has occurred."}), 500
 
 
 @api_bp.route("/orchestration/complete", methods=["POST"])
