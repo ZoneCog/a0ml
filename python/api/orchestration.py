@@ -162,7 +162,9 @@ def mark_task_completed():
         })
     
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        import logging
+        logging.error("An error occurred in /orchestration/complete", exc_info=True)
+        return jsonify({"error": "An internal error has occurred."}), 500
 
 
 @api_bp.route("/orchestration/heartbeat", methods=["POST"])
