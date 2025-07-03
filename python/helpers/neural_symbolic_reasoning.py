@@ -18,6 +18,7 @@ from .atomspace import AtomSpace
 from .pln_reasoning import PLNInferenceEngine, TruthValue
 from .moses_optimizer import MOSESOptimizer, Program, ProgramType
 from .pattern_matcher import HypergraphPatternMatcher, Pattern, Match, MatchType
+from .ecan_attention import ECANAttentionSystem
 
 
 class ReasoningStage(Enum):
@@ -69,6 +70,9 @@ class NeuralSymbolicReasoningEngine:
         self.reasoning_sessions: List[Dict[str, Any]] = []
         self.tensor_cache: Dict[str, np.ndarray] = {}
         
+        # ECAN attention system
+        self.ecan_system: Optional[ECANAttentionSystem] = None
+        
         # Tensor dimensions
         self.max_patterns = 100
         self.max_reasoning_programs = 50
@@ -81,7 +85,8 @@ class NeuralSymbolicReasoningEngine:
             "components": {
                 "pln_engine": "initialized",
                 "moses_optimizer": "initialized", 
-                "pattern_matcher": "initialized"
+                "pattern_matcher": "initialized",
+                "ecan_system": "initializing"
             },
             "tensor_dimensions": {
                 "max_patterns": self.max_patterns,
@@ -92,6 +97,11 @@ class NeuralSymbolicReasoningEngine:
         
         # Initialize basic cognitive kernels
         await self._create_default_cognitive_kernels()
+        
+        # Initialize ECAN attention system
+        self.ecan_system = ECANAttentionSystem(self.atomspace, self)
+        await self.ecan_system.initialize()
+        initialization_report["components"]["ecan_system"] = "initialized"
         
         initialization_report["default_kernels"] = len(self.cognitive_kernels)
         return initialization_report
@@ -583,3 +593,47 @@ class NeuralSymbolicReasoningEngine:
         }
         
         return api_response
+    
+    async def get_autonomy_tensor(self) -> Optional[np.ndarray]:
+        """Get autonomy metrics tensor from ECAN system"""
+        if self.ecan_system:
+            return self.ecan_system.get_autonomy_tensor()
+        return None
+    
+    async def allocate_attention(self, atom_id: str, priority: float, requester_id: str) -> bool:
+        """Allocate attention through ECAN system"""
+        if self.ecan_system:
+            return await self.ecan_system.allocate_attention(atom_id, priority, requester_id)
+        return False
+    
+    async def adaptive_attention_allocation(self, task_salience: Dict[str, float], 
+                                          resource_load: Dict[str, float]) -> Dict[str, float]:
+        """Perform adaptive attention allocation"""
+        if self.ecan_system:
+            return await self.ecan_system.adaptive_attention_allocation(task_salience, resource_load)
+        return {}
+    
+    async def trigger_self_modification(self, modification_type: str, 
+                                      parameters: Dict[str, Any]) -> bool:
+        """Trigger self-modification through ECAN system"""
+        if self.ecan_system:
+            return await self.ecan_system.self_modify(modification_type, parameters)
+        return False
+    
+    async def get_self_inspection_report(self) -> Optional[Dict[str, Any]]:
+        """Get latest self-inspection report"""
+        if self.ecan_system:
+            report = await self.ecan_system.inspect_system()
+            return report.to_dict()
+        return None
+    
+    def get_ecan_statistics(self) -> Dict[str, Any]:
+        """Get ECAN system statistics"""
+        if self.ecan_system:
+            return self.ecan_system.get_statistics()
+        return {}
+    
+    def shutdown(self):
+        """Shutdown the reasoning engine and all subsystems"""
+        if self.ecan_system:
+            self.ecan_system.stop()
