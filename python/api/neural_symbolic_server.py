@@ -533,6 +533,192 @@ def get_help():
     })
 
 
+@app.route('/neural-symbolic/ecan/autonomy-tensor', methods=['GET'])
+def get_autonomy_tensor():
+    """Get autonomy metrics tensor T_auto[a_levels, r_types, m_states]"""
+    try:
+        loop = asyncio.new_event_loop()
+        asyncio.set_event_loop(loop)
+        
+        engine = loop.run_until_complete(ensure_reasoning_engine())
+        tensor = loop.run_until_complete(engine.get_autonomy_tensor())
+        
+        if tensor is None:
+            return jsonify({"error": "ECAN system not initialized"}), 500
+        
+        return jsonify({
+            "success": True,
+            "tensor_shape": tensor.shape,
+            "tensor_stats": {
+                "mean": float(tensor.mean()),
+                "std": float(tensor.std()),
+                "min": float(tensor.min()),
+                "max": float(tensor.max())
+            },
+            "dimensions": {
+                "autonomy_levels": tensor.shape[0],
+                "resource_types": tensor.shape[1],
+                "meta_states": tensor.shape[2]
+            }
+        })
+    
+    except Exception as e:
+        return jsonify({
+            "error": str(e),
+            "traceback": traceback.format_exc()
+        }), 500
+
+
+@app.route('/neural-symbolic/ecan/allocate-attention', methods=['POST'])
+def allocate_attention():
+    """Allocate attention to specific atoms"""
+    try:
+        data = request.get_json()
+        if not data:
+            return jsonify({"error": "No JSON data provided"}), 400
+        
+        atom_id = data.get('atom_id')
+        priority = data.get('priority', 0.5)
+        requester_id = data.get('requester_id', 'api_client')
+        
+        if not atom_id:
+            return jsonify({"error": "atom_id is required"}), 400
+        
+        loop = asyncio.new_event_loop()
+        asyncio.set_event_loop(loop)
+        
+        engine = loop.run_until_complete(ensure_reasoning_engine())
+        success = loop.run_until_complete(engine.allocate_attention(atom_id, priority, requester_id))
+        
+        return jsonify({
+            "success": success,
+            "atom_id": atom_id,
+            "priority": priority,
+            "requester_id": requester_id
+        })
+    
+    except Exception as e:
+        return jsonify({
+            "error": str(e),
+            "traceback": traceback.format_exc()
+        }), 500
+
+
+@app.route('/neural-symbolic/ecan/adaptive-attention', methods=['POST'])
+def adaptive_attention_allocation():
+    """Perform adaptive attention allocation"""
+    try:
+        data = request.get_json()
+        if not data:
+            return jsonify({"error": "No JSON data provided"}), 400
+        
+        task_salience = data.get('task_salience', {})
+        resource_load = data.get('resource_load', {})
+        
+        loop = asyncio.new_event_loop()
+        asyncio.set_event_loop(loop)
+        
+        engine = loop.run_until_complete(ensure_reasoning_engine())
+        allocation_result = loop.run_until_complete(
+            engine.adaptive_attention_allocation(task_salience, resource_load)
+        )
+        
+        return jsonify({
+            "success": True,
+            "allocation_result": allocation_result,
+            "task_salience": task_salience,
+            "resource_load": resource_load
+        })
+    
+    except Exception as e:
+        return jsonify({
+            "error": str(e),
+            "traceback": traceback.format_exc()
+        }), 500
+
+
+@app.route('/neural-symbolic/ecan/self-modify', methods=['POST'])
+def trigger_self_modification():
+    """Trigger self-modification"""
+    try:
+        data = request.get_json()
+        if not data:
+            return jsonify({"error": "No JSON data provided"}), 400
+        
+        modification_type = data.get('modification_type')
+        parameters = data.get('parameters', {})
+        
+        if not modification_type:
+            return jsonify({"error": "modification_type is required"}), 400
+        
+        loop = asyncio.new_event_loop()
+        asyncio.set_event_loop(loop)
+        
+        engine = loop.run_until_complete(ensure_reasoning_engine())
+        success = loop.run_until_complete(
+            engine.trigger_self_modification(modification_type, parameters)
+        )
+        
+        return jsonify({
+            "success": success,
+            "modification_type": modification_type,
+            "parameters": parameters
+        })
+    
+    except Exception as e:
+        return jsonify({
+            "error": str(e),
+            "traceback": traceback.format_exc()
+        }), 500
+
+
+@app.route('/neural-symbolic/ecan/inspect', methods=['GET'])
+def get_self_inspection_report():
+    """Get self-inspection report"""
+    try:
+        loop = asyncio.new_event_loop()
+        asyncio.set_event_loop(loop)
+        
+        engine = loop.run_until_complete(ensure_reasoning_engine())
+        report = loop.run_until_complete(engine.get_self_inspection_report())
+        
+        if report is None:
+            return jsonify({"error": "ECAN system not initialized"}), 500
+        
+        return jsonify({
+            "success": True,
+            "report": report
+        })
+    
+    except Exception as e:
+        return jsonify({
+            "error": str(e),
+            "traceback": traceback.format_exc()
+        }), 500
+
+
+@app.route('/neural-symbolic/ecan/statistics', methods=['GET'])
+def get_ecan_statistics():
+    """Get ECAN system statistics"""
+    try:
+        loop = asyncio.new_event_loop()
+        asyncio.set_event_loop(loop)
+        
+        engine = loop.run_until_complete(ensure_reasoning_engine())
+        statistics = engine.get_ecan_statistics()
+        
+        return jsonify({
+            "success": True,
+            "statistics": statistics
+        })
+    
+    except Exception as e:
+        return jsonify({
+            "error": str(e),
+            "traceback": traceback.format_exc()
+        }), 500
+
+
 if __name__ == '__main__':
     print("🚀 Starting Neural-Symbolic Reasoning API Server...")
     print("📚 Initializing reasoning engine...")
