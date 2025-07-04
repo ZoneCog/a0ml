@@ -365,7 +365,8 @@ class SchemeCognitiveGrammarRegistry:
             return grammar
             
         except Exception as e:
-            self.logger.error(f"Failed to register grammar {grammar_id}: {e}")
+            sanitized_grammar_id = grammar_id.replace('\r\n', '').replace('\n', '')
+            self.logger.error(f"Failed to register grammar {sanitized_grammar_id}: {e}")
             raise
             
     def _generate_patterns_from_grammar(self, grammar: CognitiveGrammar) -> List[Pattern]:
@@ -456,7 +457,8 @@ class SchemeCognitiveGrammarRegistry:
             return True
             
         except Exception as e:
-            self.logger.error(f"Failed to extend grammar {grammar_id}: {e}")
+            sanitized_grammar_id = grammar_id.replace('\r\n', '').replace('\n', '')
+            self.logger.error(f"Failed to extend grammar {sanitized_grammar_id}: {e}")
             return False
             
     def specialize_grammar(self, base_grammar_id: str, specialization_name: str,
@@ -486,7 +488,8 @@ class SchemeCognitiveGrammarRegistry:
             return specialized_id
             
         except Exception as e:
-            self.logger.error(f"Failed to specialize grammar {base_grammar_id}: {e}")
+            sanitized_base_grammar_id = base_grammar_id.replace('\r\n', '').replace('\n', '')
+            self.logger.error(f"Failed to specialize grammar {sanitized_base_grammar_id}: {e}")
             return None
             
     def compose_grammars(self, grammar_ids: List[str], composition_name: str) -> Optional[str]:
