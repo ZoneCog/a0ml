@@ -217,7 +217,7 @@ def list_cognitive_grammars():
         logger.error(f"Error listing grammars: {traceback.format_exc()}")
         return jsonify({
             "error": "Failed to list grammars",
-            "details": str(e)
+            "details": "An internal error occurred"
         }), 500
 
 
@@ -282,7 +282,7 @@ def register_cognitive_grammar():
         logger.error(f"Error registering grammar: {traceback.format_exc()}")
         return jsonify({
             "error": "Failed to register grammar",
-            "details": str(e)
+            "details": "An internal error occurred"
         }), 500
 
 
