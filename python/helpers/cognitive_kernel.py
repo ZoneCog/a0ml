@@ -333,7 +333,8 @@ class UnifiedCognitiveKernel:
                 self.logger.error(f"Error in kernel loop: {e}")
                 
             # Sleep for kernel cycle interval
-            asyncio.sleep(0.1)
+            import time
+            time.sleep(0.1)
             
     def _update_kernel_tensor(self):
         """Update the kernel tensor with current subsystem states"""
