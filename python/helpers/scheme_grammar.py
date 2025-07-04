@@ -361,10 +361,12 @@ class SchemeCognitiveGrammarRegistry:
             patterns = self._generate_patterns_from_grammar(grammar)
             self.grammar_patterns[grammar_id] = patterns
             
-            self.logger.info(f"Registered cognitive grammar: {grammar_id}")
+            sanitized_grammar_id = grammar_id.replace('\r\n', '').replace('\n', '')
+            self.logger.info(f"Registered cognitive grammar: {sanitized_grammar_id}")
             return grammar
             
         except Exception as e:
+            sanitized_grammar_id = grammar_id.replace('\r\n', '').replace('\n', '')
             sanitized_grammar_id = grammar_id.replace('\r\n', '').replace('\n', '')
             self.logger.error(f"Failed to register grammar {sanitized_grammar_id}: {e}")
             raise
@@ -453,10 +455,12 @@ class SchemeCognitiveGrammarRegistry:
             patterns = self._generate_patterns_from_grammar(grammar)
             self.grammar_patterns[grammar_id] = patterns
             
-            self.logger.info(f"Extended grammar {grammar_id}")
+            sanitized_grammar_id = grammar_id.replace('\r\n', '').replace('\n', '')
+            self.logger.info(f"Extended grammar {sanitized_grammar_id}")
             return True
             
         except Exception as e:
+            sanitized_grammar_id = grammar_id.replace('\r\n', '').replace('\n', '')
             sanitized_grammar_id = grammar_id.replace('\r\n', '').replace('\n', '')
             self.logger.error(f"Failed to extend grammar {sanitized_grammar_id}: {e}")
             return False
@@ -488,6 +492,7 @@ class SchemeCognitiveGrammarRegistry:
             return specialized_id
             
         except Exception as e:
+            sanitized_base_grammar_id = base_grammar_id.replace('\r\n', '').replace('\n', '')
             sanitized_base_grammar_id = base_grammar_id.replace('\r\n', '').replace('\n', '')
             self.logger.error(f"Failed to specialize grammar {sanitized_base_grammar_id}: {e}")
             return None
