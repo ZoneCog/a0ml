@@ -529,7 +529,7 @@ def get_meta_events():
         logger.error(f"Error getting meta events: {traceback.format_exc()}")
         return jsonify({
             "error": "Failed to get meta events",
-            "details": str(e)
+            "details": "An internal error occurred. Please contact support."
         }), 500
 
 
@@ -562,7 +562,7 @@ def trigger_self_modification():
         logger.error(f"Error triggering self-modification: {traceback.format_exc()}")
         return jsonify({
             "error": "Failed to trigger self-modification",
-            "details": str(e)
+            "details": "An internal error occurred. Please contact support."
         }), 500
 
 
@@ -599,7 +599,7 @@ def get_kernel_status():
         logger.error(f"Error getting kernel status: {traceback.format_exc()}")
         return jsonify({
             "error": "Failed to get kernel status",
-            "details": str(e)
+            "details": "An internal error occurred. Please contact support."
         }), 500
 
 
