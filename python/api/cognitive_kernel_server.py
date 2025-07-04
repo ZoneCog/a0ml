@@ -162,7 +162,7 @@ def get_attention_membranes():
         logger.error(f"Error getting attention membranes: {traceback.format_exc()}")
         return jsonify({
             "error": "Failed to get attention membranes",
-            "details": str(e)
+            "details": "An internal error occurred"
         }), 500
 
 
@@ -185,7 +185,7 @@ def get_kernel_statistics():
         logger.error(f"Error getting kernel statistics: {traceback.format_exc()}")
         return jsonify({
             "error": "Failed to get kernel statistics",
-            "details": str(e)
+            "details": "An internal error occurred"
         }), 500
 
 
