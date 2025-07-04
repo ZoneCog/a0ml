@@ -71,7 +71,7 @@ def initialize_system():
         logger.error(f"Error initializing cognitive kernel: {traceback.format_exc()}")
         return jsonify({
             "error": "Failed to initialize cognitive kernel",
-            "details": str(e)
+            "details": "An internal error occurred"
         }), 500
 
 
@@ -101,7 +101,7 @@ def invoke_kernel():
         logger.error(f"Error invoking kernel: {traceback.format_exc()}")
         return jsonify({
             "error": "Failed to invoke kernel",
-            "details": str(e)
+            "details": "An internal error occurred"
         }), 500
 
 
@@ -138,7 +138,7 @@ def get_kernel_tensor():
         logger.error(f"Error getting kernel tensor: {traceback.format_exc()}")
         return jsonify({
             "error": "Failed to get kernel tensor",
-            "details": str(e)
+            "details": "An internal error occurred"
         }), 500
 
 
