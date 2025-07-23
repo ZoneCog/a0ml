@@ -344,7 +344,7 @@ class AtomSpaceServer:
             except Exception as e:
                 import logging
                 logging.error("Exception occurred", exc_info=True)
-                return jsonify({'success': False, 'error': str(e)}), 500
+                return jsonify({'success': False, 'error': "An internal error has occurred."}), 500
 
         @self.app.route('/atomspace/cognitive/import', methods=['POST'])
         async def import_cognitive_knowledge():
@@ -368,7 +368,7 @@ class AtomSpaceServer:
             except Exception as e:
                 import logging
                 logging.error("Exception occurred", exc_info=True)
-                return jsonify({'success': False, 'error': str(e)}), 500
+                return jsonify({'success': False, 'error': "An internal error has occurred."}), 500
 
         @self.app.route('/atomspace/cognitive/grammars', methods=['GET'])
         async def list_cognitive_grammars():
@@ -383,7 +383,7 @@ class AtomSpaceServer:
             except Exception as e:
                 import logging
                 logging.error("Exception occurred", exc_info=True)
-                return jsonify({'success': False, 'error': str(e)}), 500
+                return jsonify({'success': False, 'error': "An internal error has occurred."}), 500
 
         @self.app.route('/atomspace/cognitive/grammars/<grammar_id>', methods=['GET'])
         async def get_cognitive_grammar(grammar_id):
@@ -400,7 +400,7 @@ class AtomSpaceServer:
             except Exception as e:
                 import logging
                 logging.error("Exception occurred", exc_info=True)
-                return jsonify({'success': False, 'error': str(e)}), 500
+                return jsonify({'success': False, 'error': "An internal error has occurred."}), 500
     
     def run(self, host='0.0.0.0', port=5001, debug=False):
         """Run the AtomSpace server"""
