@@ -316,7 +316,7 @@ class AtomSpaceServer:
             except Exception as e:
                 import logging
                 logging.error("Exception occurred", exc_info=True)
-                return jsonify({'success': False, 'error': str(e)}), 500
+                return jsonify({'success': False, 'error': "An internal error has occurred."}), 500
 
         @self.app.route('/atomspace/cognitive/statistics', methods=['GET'])
         async def get_cognitive_statistics():
